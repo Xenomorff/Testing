@@ -26,3 +26,10 @@ def fib(n: int):
             a, b = b, a + b
             n -= 1
     return a
+
+
+@app.get("/greet/{name}")
+def greets(name: str):
+    if not isinstance(name, str):
+        raise TypeError('Введите строковое значение')
+    return {"Hello": name.capitalize()}
