@@ -1,9 +1,16 @@
 from typing import Union
-
 from fastapi import FastAPI
+from database import add_user, get_user_by_name, initialize_db
+from contextlib import asynccontextmanager
 
-app = FastAPI()
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # startup
+    await initialize_db()
+    yield
+    # shutdown
 
+app = FastAPI(lifespan=lifespan)
 
 @app.get("/")
 def read_root():
@@ -18,7 +25,7 @@ def read_item(item_id: int, q: Union[str, None] = None):
 @app.get("/fibonacci/{n}")
 def fib(n: int):
     '''возвращает n-e число из последовательности Фибоначчи'''
-    if type(n) != 'int' and n < 0:
+    if type(n) != 'int' or n < 0:
         raise TypeError('Введите натуральное число')
     else:
         a, b = 0, 1
@@ -29,7 +36,12 @@ def fib(n: int):
 
 
 @app.get("/greet/{name}")
-def greets(name: str):
+async def greets(name: str):
     if not isinstance(name, str):
         raise TypeError('Введите строковое значение')
-    return {"Hello": name.capitalize()}
+    user = await get_user_by_name(name)
+    if user:
+        return {"Уже виделись": name.capitalize()}
+    else:
+        await add_user(name)
+        return {"Hello": name.capitalize()}
