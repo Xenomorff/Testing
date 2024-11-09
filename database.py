@@ -38,3 +38,14 @@ async def get_user_by_name(name: str) -> dict | None:
             return None
         print(user)
         return {'id': user[0], 'name': user[1]}
+    
+
+async def get_user_names():
+    async with aiosqlite.connect(db_name) as db:
+        query = '''
+            SELECT *
+            FROM Users
+            '''
+        result = await db.execute(query)
+        users = await result.fetchall()
+        return [{'id': user[0], 'name': user[1]} for user in users]
