@@ -1,5 +1,6 @@
+import datetime
 from typing import Union
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from database import add_user, get_user_by_name, get_user_names, initialize_db
 from contextlib import asynccontextmanager
 
@@ -10,7 +11,26 @@ async def lifespan(app: FastAPI):
     yield
     # shutdown
 
+async def printer(req: Request, call_next):
+    # ---- логика до запроса----
+    print(req.client.host)
+    start_time = datetime.datetime.now()
+
+    #выполнение запроса
+    response = await call_next(req)
+
+    # ---- логика после запроса----
+    end_time = datetime.datetime.now() - start_time
+
+    print(f"Обработан запрос за {end_time}")
+
+    return response
+
+
 app = FastAPI(lifespan=lifespan)
+
+
+app.middleware('http')(printer)
 
 @app.get("/")
 def read_root():
