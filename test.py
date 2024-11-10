@@ -1,6 +1,6 @@
 from typing import Union
 from fastapi import FastAPI
-from database import add_user, get_user_by_name, initialize_db
+from database import add_user, get_user_by_name, get_user_names, initialize_db
 from contextlib import asynccontextmanager
 
 @asynccontextmanager
@@ -45,3 +45,9 @@ async def greets(name: str):
     else:
         await add_user(name)
         return {"Hello": name.capitalize()}
+    
+
+@app.get("/get_all_names")
+async def get_names():
+    users = await get_user_names()
+    return {"users": users}
