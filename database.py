@@ -43,7 +43,7 @@ async def get_user_by_name(name: str) -> dict | None:
 async def get_user_names():
     async with aiosqlite.connect(db_name) as db:
         query = '''
-            SELECT *
+            SELECT id, name
             FROM Users
             '''
         result = await db.execute(query)
