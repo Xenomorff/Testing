@@ -47,7 +47,7 @@ async def greets(name: str):
         return {"Hello": name.capitalize()}
     
 
-@app.get("/getallnames")
+@app.get("/get_all_names")
 async def get_names():
     users = await get_user_names()
     return {"users": users}
