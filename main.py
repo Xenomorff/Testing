@@ -2,6 +2,7 @@ import datetime
 from typing import Union
 from fastapi import FastAPI, Request
 from database import add_user, get_user_by_name, get_user_names, initialize_db
+from utils import get_fib
 from contextlib import asynccontextmanager
 
 @asynccontextmanager
@@ -44,15 +45,11 @@ def read_item(item_id: int, q: Union[str, None] = None):
 
 @app.get("/fibonacci/{n}")
 def fib(n: int):
-    '''возвращает n-e число из последовательности Фибоначчи'''
+    '''проверяет корректность введенных данных'''
     if type(n) != 'int' or n < 0:
         raise TypeError('Введите натуральное число')
     else:
-        a, b = 0, 1
-        while n > 0:
-            a, b = b, a + b
-            n -= 1
-    return a
+        return get_fib(n)
 
 
 @app.get("/greet/{name}")
