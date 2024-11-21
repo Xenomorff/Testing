@@ -5,6 +5,7 @@ from database import add_user, get_user_by_name, get_user_names, initialize_db
 from utils import get_fib
 from contextlib import asynccontextmanager
 from src.routers.users import router as user_router
+from src.routers.math import router as math_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -31,13 +32,6 @@ async def printer(req: Request, call_next):
 
 app = FastAPI(lifespan=lifespan)
 app.include_router(user_router)
+app.include_router(math_router)
 
 app.middleware('http')(printer)
-
-@app.get("/fibonacci/{n}")
-def fib(n: int):
-    '''проверяет корректность введенных данных'''
-    if type(n) != 'int' or n < 0:
-        raise TypeError('Введите натуральное число')
-    else:
-        return get_fib(n)
