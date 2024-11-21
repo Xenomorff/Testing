@@ -34,16 +34,6 @@ app.include_router(user_router)
 
 app.middleware('http')(printer)
 
-@app.get("/")
-def read_root():
-    return {"Hello": "World"}
-
-
-@app.get("/items/{item_id}")
-def read_item(item_id: int, q: Union[str, None] = None):
-    return {"item_id": item_id, "q": q}
-
-
 @app.get("/fibonacci/{n}")
 def fib(n: int):
     '''проверяет корректность введенных данных'''
@@ -51,4 +41,3 @@ def fib(n: int):
         raise TypeError('Введите натуральное число')
     else:
         return get_fib(n)
-
