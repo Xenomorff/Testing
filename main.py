@@ -4,6 +4,7 @@ from fastapi import FastAPI, Request
 from database import add_user, get_user_by_name, get_user_names, initialize_db
 from utils import get_fib
 from contextlib import asynccontextmanager
+from src.routers.users import router as user_router
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
@@ -29,7 +30,7 @@ async def printer(req: Request, call_next):
 
 
 app = FastAPI(lifespan=lifespan)
-
+app.include_router(user_router)
 
 app.middleware('http')(printer)
 
@@ -51,20 +52,3 @@ def fib(n: int):
     else:
         return get_fib(n)
 
-
-@app.get("/greet/{name}")
-async def greets(name: str):
-    if not isinstance(name, str):
-        raise TypeError('Введите строковое значение')
-    user = await get_user_by_name(name)
-    if user:
-        return {"Уже виделись": name.capitalize()}
-    else:
-        await add_user(name)
-        return {"Hello": name.capitalize()}
-    
-
-@app.get("/get_all_names")
-async def get_names():
-    users = await get_user_names()
-    return {"users": users}
